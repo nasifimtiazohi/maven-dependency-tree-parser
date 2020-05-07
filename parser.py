@@ -22,7 +22,7 @@ def processLines(filename):
 def buildTree(Tree):
     root=None
     group, artifact, packaging, version, scope = parseCanonicalForm(Tree[0])
-    root = depTreeNode(group, artifact, packaging, version, depth=0)
+    root = depTreeNode(group, artifact,version, packaging,depth=0)
     root.children=Tree[1:]
 
     curLevel=[root]
@@ -43,7 +43,7 @@ def buildTree(Tree):
 
             for i in range(0,len(indexes)):
                 group, artifact, packaging, version, scope = parseCanonicalForm(node.children[indexes[i]])
-                child = depTreeNode(group, artifact, packaging, version, scope, depth, node)
+                child = depTreeNode(group, artifact, version, packaging,  scope, depth, node)
                 if i != len(indexes) - 1:
                     #if not last node
                     child.children=node.children[indexes[i]+1:indexes[i+1]]
@@ -74,7 +74,9 @@ def dependencyTree2CSV(filename):
     return csv
 
 if __name__=='__main__':
-    print(dependencyTree2CSV('dep.txt'))
+    csv=dependencyTree2CSV('dep.txt')
+    for c in csv:
+        print(c)
     
         
 
