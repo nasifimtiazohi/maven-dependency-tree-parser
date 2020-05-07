@@ -13,7 +13,7 @@ def parseCanonicalForm(s):
     return group, artifact, packaging, version, scope
     
 def processLines(filename):
-    file=open('dep.txt','r')
+    file=open(filename,'r')
     Tree=[]
     for line in file:
         Tree.append(line.replace('\n',''))
@@ -75,7 +75,7 @@ def dependencyTree2CSV(filename):
     return csv
 
 if __name__=='__main__':
-    csv=dependencyTree2CSV('dep.txt')
+    csv=dependencyTree2CSV('depwebapp.txt')
     for c in csv:
         print(c)
     
