@@ -8,4 +8,8 @@ class depTreeNode():
         self.depth=depth
         self.parent=parent
         self.children=None
+    
+    def getAttributes(self):
+        return [self.group,self.artifact,self.version,self.packaging,
+                self.scope,self.depth]
 
