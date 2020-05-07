@@ -36,9 +36,10 @@ def buildTree(Tree):
             directChildren=[]
             indexes=[] #get the indexes of direct child in node.children
             for i in range(0,len(node.children)):
-                node.children[i]=node.children[i][2:].strip()
+                node.children[i]=node.children[i][3:] #3 characters preced for each level
                 line=node.children[i]
-                if not (line[0]=='\\' or line[0]=='+' or line[0]=='|' or line[0]=='-'):
+                #if not (line[0]=='\\' or line[0]=='+' or line[0]=='|' or line[0]=='-' or line[0]==' '):
+                if line[0].isalpha():
                     indexes.append(i)
 
             for i in range(0,len(indexes)):
