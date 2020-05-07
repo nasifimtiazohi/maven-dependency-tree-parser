@@ -1,16 +1,4 @@
-from sqlConnection import execute
 from depTreeNode import depTreeNode
-
-def getModuleId(module):
-    #TODO refactor to be more elegant?
-    #check if module exists in db
-    results=execute('select * from modules where name ="{}";'.format(module))
-    if not len(results)==1:
-        #add the module 
-        execute('insert into modules values (null, "{}");'.format(module))
-        results=execute('select * from modules where name ="{}";'.format(module))
-    
-    return results[0]['id']
 
 def parseCanonicalForm(s):
     s=s.split(":")
@@ -32,10 +20,8 @@ def processLines(filename):
     return Tree
 
 def buildTree(Tree):
-    moduleId=None
     root=None
     group, artifact, packaging, version, scope = parseCanonicalForm(Tree[0])
-    moduleId= getModuleId(artifact)
     root = depTreeNode(group, artifact, packaging, version, depth=0)
     root.children=Tree[1:]
 
