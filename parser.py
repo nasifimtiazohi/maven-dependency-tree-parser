@@ -3,14 +3,17 @@ from depTreeNode import depTreeNode
 def parseCanonicalForm(s):
     s=s.split(":")
     if len(s)  < 4:
+        #TODO: better error handling
         print("error: ",s)
         return
+
+    #in maven log, packaging comes before version
     group, artifact, packaging, version, scope = s[0], s[1], s[2], s[3], None
 
     if len(s) == 5:
         scope = s[4]
     
-    return group, artifact, packaging, version, scope
+    return group, artifact, version,  packaging, scope
     
 def processLines(filename):
     file=open(filename,'r')
@@ -21,8 +24,8 @@ def processLines(filename):
 
 def buildTree(Tree):
     root=None
-    group, artifact, packaging, version, scope = parseCanonicalForm(Tree[0])
-    root = depTreeNode(group, artifact,version, packaging,depth=0)
+    group, artifact, version,  packaging, scope = parseCanonicalForm(Tree[0])
+    root = depTreeNode(group, artifact, version,  packaging, scope, depth=0)
     root.children=Tree[1:]
 
     curLevel=[root]
@@ -39,12 +42,13 @@ def buildTree(Tree):
                 node.children[i]=node.children[i][3:] #3 characters preced for each level
                 line=node.children[i]
                 #if not (line[0]=='\\' or line[0]=='+' or line[0]=='|' or line[0]=='-' or line[0]==' '):
+                #TODO: may not work for all extended maven formats
                 if line[0].isalpha():
                     indexes.append(i)
 
             for i in range(0,len(indexes)):
-                group, artifact, packaging, version, scope = parseCanonicalForm(node.children[indexes[i]])
-                child = depTreeNode(group, artifact, version, packaging,  scope, depth, node)
+                group, artifact, version,  packaging, scope = parseCanonicalForm(node.children[indexes[i]])
+                child = depTreeNode(group, artifact, version,  packaging, scope, depth, node)
                 if i != len(indexes) - 1:
                     #if not last node
                     child.children=node.children[indexes[i]+1:indexes[i+1]]
