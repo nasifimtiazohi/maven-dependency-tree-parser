@@ -3,9 +3,7 @@ from DepTreeNode import DepTreeNode
 def parseCanonicalForm(s):
     s=s.split(":")
     if len(s)  < 4:
-        #TODO: better error handling
-        print("error: ",s)
-        return
+        raise Exception("invalid data")
 
     #in maven log, packaging comes before version
     group, artifact, packaging, version, scope = s[0], s[1], s[2], s[3], None
@@ -24,6 +22,8 @@ def processLines(filename):
 
 def buildTree(Tree):
     root=None
+    if not Tree:
+        raise Exception('blank file')
     group, artifact, version,  packaging, scope = parseCanonicalForm(Tree[0])
     root = DepTreeNode(group, artifact, version,  packaging, scope, depth=0)
     root.children=Tree[1:]
@@ -72,11 +72,15 @@ def write2dict(root):
     recursion(root)
     
     project= ':'.join(data[0][0:3])
+    d={'project':project, 'dependencies':{}}
+
     data=data[1:]
-    data=list(map(list, zip(*data)))
-    d={'project':[project]*len(data[0])}
-    for i,k in enumerate(headers):
-        d[k]=data[i]
+    if data:
+        if len(data[0]) != 6:
+            raise Exception("data row does not have six columns") 
+        data=list(map(list, zip(*data)))
+        for i,k in enumerate(headers):
+            d['dependencies'][k]=data[i]
     return d
 
 
@@ -87,7 +91,7 @@ def dependencyTree2dict(filename):
     return d
 
 if __name__=='__main__':
-    d=dependencyTree2dict('depwebapp.txt')
+    d=dependencyTree2dict('./testcases/deproot.txt')
     print(d)
     
         
