@@ -1,4 +1,4 @@
-from depTreeNode import depTreeNode
+from DepTreeNode import DepTreeNode
 
 def parseCanonicalForm(s):
     s=s.split(":")
@@ -25,7 +25,7 @@ def processLines(filename):
 def buildTree(Tree):
     root=None
     group, artifact, version,  packaging, scope = parseCanonicalForm(Tree[0])
-    root = depTreeNode(group, artifact, version,  packaging, scope, depth=0)
+    root = DepTreeNode(group, artifact, version,  packaging, scope, depth=0)
     root.children=Tree[1:]
 
     curLevel=[root]
@@ -48,7 +48,7 @@ def buildTree(Tree):
 
             for i in range(0,len(indexes)):
                 group, artifact, version,  packaging, scope = parseCanonicalForm(node.children[indexes[i]])
-                child = depTreeNode(group, artifact, version,  packaging, scope, depth, node)
+                child = DepTreeNode(group, artifact, version,  packaging, scope, depth, node)
                 if i != len(indexes) - 1:
                     #if not last node
                     child.children=node.children[indexes[i]+1:indexes[i+1]]
@@ -61,27 +61,32 @@ def buildTree(Tree):
         curLevel=nextLevel
     return root
 
-def write2csv(root):
-    csv=[]
+def write2dict(root):
+    headers=DepTreeNode.getAttributesHeaders()
+    data=[]
     def recursion(root):
-        nonlocal csv
-        csv.append( root.getAttributes())
+        nonlocal data
+        data.append( root.getAttributes())
         for child in root.children:
             recursion(child)
     recursion(root)
-    return csv
+    
+    data=list(map(list, zip(*data)))
+    d={}
+    for i,k in enumerate(headers):
+        d[k]=data[i]
+    return d
 
 
-def dependencyTree2CSV(filename):
+def dependencyTree2dict(filename):
     Tree=processLines(filename)
     root=buildTree(Tree)
-    csv=write2csv(root)
-    return csv
+    d=write2dict(root)
+    return d
 
 if __name__=='__main__':
-    csv=dependencyTree2CSV('depwebapp.txt')
-    for c in csv:
-        print(c)
+    d=dependencyTree2dict('depwebapp.txt')
+    print(d)
     
         
 
