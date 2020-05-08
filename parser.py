@@ -71,8 +71,10 @@ def write2dict(root):
             recursion(child)
     recursion(root)
     
+    project= ':'.join(data[0][0:3])
+    data=data[1:]
     data=list(map(list, zip(*data)))
-    d={}
+    d={'project':[project]*len(data[0])}
     for i,k in enumerate(headers):
         d[k]=data[i]
     return d
