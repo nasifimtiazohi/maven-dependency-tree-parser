@@ -1,1 +1,0 @@
-org.openmrs:openmrs:pom:2.3.0

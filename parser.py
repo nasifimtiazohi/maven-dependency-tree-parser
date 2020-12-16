@@ -66,7 +66,7 @@ def write2dict(root):
     data=[]
     def recursion(root):
         nonlocal data
-        data.append( root.getAttributes())
+        data.append(root.getAttributes())
         for child in root.children:
             recursion(child)
     recursion(root)
@@ -91,7 +91,7 @@ def dependencyTree2dict(filename):
     return d
 
 if __name__=='__main__':
-    d=dependencyTree2dict('./testcases/deproot.txt')
+    d=dependencyTree2dict('./testcases/dep.txt')
     print(d)
     
         
